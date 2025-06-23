@@ -11,7 +11,7 @@ jobs:
     environment: AFDevOrgRenew       # same environment that holds your secrets
     strategy:
       matrix:
-        org: [AGENTFORCE_DEV_ORG_URL, LAGARDE_PERSONAL_DEV_ORG_URL]
+        org: [AGENTFORCE_DEV_ORG_URL, LAGARDE_DEV_ORG_URL]
 
     steps:
       - uses: actions/checkout@v4
