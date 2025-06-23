@@ -1,35 +1,29 @@
-name: Renew Dev Orgs
-
+name: Renew Agentforce Dev Org Lease
+run-name: ${{ github.actor }} triggered dev org renewal build
+#on: [push]
 on:
   schedule:
-    - cron: "30 20 * * MON"   # every Monday, adjust if you like
+    - cron:  '30 20 * * TUE'
   workflow_dispatch:
-
 jobs:
-  renew-dev-orgs:
+  dev-org-renew:
     runs-on: ubuntu-latest
-    environment: AFDevOrgRenew       # same environment that holds your secrets
-    strategy:
-      matrix:
-        org: [AGENTFORCE_DEV_ORG_URL, LAGARDE_DEV_ORG_URL]
-
+    environment: AFDevOrgRenew
     steps:
       - uses: actions/checkout@v4
+        with: 
+          ref: main
       - uses: actions/setup-node@v3
         with:
-          node-version: "20"
-
-      - name: Install Salesforce CLI
-        run: npm install @salesforce/cli -g
-
-      # 🔑 Authenticate to the current org in the matrix
-      - name: Authenticate ${{ matrix.org }}
-        env:
-          AUTH: ${{ secrets[matrix.org] }}
+          node-version: '20'
+      - name: 'Install CLI'
+        run: npm install @salesforce/cli --location=global
+      - run: sf --version
+      - name: 'Authenticate to Agentforce org'
         run: |
-          echo "$AUTH" > ./auth.txt
-          sf org login sfdx-url -f ./auth.txt -a ${{ matrix.org }} -d
-
-      # 🏷️ Do something trivial so the login counts
-      - name: Touch the org
-        run: sf data query -q "SELECT Name FROM Organization" -o ${{ matrix.org }}
+            echo ${{ secrets.AGENTFORCE_DEV_ORG_URL }} > ./AGENTFORCE_DEV_ORG_URL.txt
+            ls -al ./AGENTFORCE_DEV_ORG_URL.txt
+            sf org login sfdx-url -f ./AGENTFORCE_DEV_ORG_URL.txt -a AFDevOrgRenew -d
+      - name: 'Query data'
+        run: |
+            sf data query --query "select name from organization" -o AFDevOrgRenew
