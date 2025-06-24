@@ -1,2 +1,2 @@
 # RenewAFDevOrgLease
-reviews the "lease" on an Agentforce enabled dev org
+renews the "lease" on an Agentforce enabled dev org
